@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simon 序列記憶遊戲</title>
+    <title>Simon 序列記憶遊戲 (新佈局)</title>
     <style>
         body {
             display: flex;
@@ -16,155 +16,138 @@
             background-color: #f0f0f0;
             font-family: sans-serif;
             margin: 0;
-            padding: 10px; /* Add some padding in case content touches edges */
-            box-sizing: border-box; /* Include padding in total width/height */
+            padding: 10px; /* Add some padding */
+            box-sizing: border-box; /* Include padding */
         }
 
         h1 {
             color: #333;
-            margin-top: 0; /* Adjust margin */
-            margin-bottom: 15px; /* Adjust margin */
-            font-size: 2em; /* Use relative unit for title */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 2em;
             text-align: center;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0;
         }
 
         #score {
-            margin-bottom: 20px; /* Adjust margin */
-            font-size: 1.8em; /* Use relative unit */
+            margin-bottom: 20px;
+            font-size: 1.8em;
             font-weight: bold;
             color: #333;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0;
         }
 
-        #game-container {
-            position: relative;
-            /* Use viewport units for size, and set max size for large screens */
-            /* Slightly increased container percentage and max size */
-            width: 90vw; /* 容器寬度為視口寬度的 90% */
-            height: 90vw; /* 容器高度為視口寬度的 90%，保持正方形 */
-            max-width: 550px; /* 最大寬度不超過 550px */
-            max-height: 550px; /* 最大高度不超過 550px */
-
-            margin: 0 auto; /* Center the container horizontally */
+        #game-container-new {
+            display: flex; /* Use Flexbox for the main container */
+            flex-direction: column; /* Stack children (rows and start button) vertically */
+            align-items: center; /* Center items horizontally */
+            /* Responsive size */
+            width: 95vw; /* Use a larger percentage of viewport width */
+            max-width: 550px; /* Max width */
+            margin: 0 auto; /* Center container */
             background-color: #333;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            flex-shrink: 0; /* Prevent shrinking below its size in flex container */
+            padding: 20px 10px; /* Add padding inside container */
+            box-sizing: border-box;
+            flex-shrink: 0;
         }
+
+        .button-row {
+            display: flex; /* Use Flexbox for rows */
+            justify-content: center; /* Center items horizontally within the row */
+            align-items: center; /* Vertically center items within the row */
+            width: 100%; /* Row takes full width of container */
+            margin-bottom: 15px; /* Space between rows */
+             gap: 20px; /* Add space between buttons in a row */
+        }
+
+        /* For rows with two buttons, spread them out */
+        .button-row:not(.centered-row) {
+            justify-content: space-around; /* Distribute space for two buttons */
+        }
+
 
         .game-button {
-            position: absolute;
-            /* Use percentage for size relative to container - Reduced size */
-            width: 30%; /* 按鈕寬度為容器寬度的 30% */
-            height: 30%; /* 按鈕高度為容器高度的 30% */
+            /* Responsive size */
+            /* Size relative to the row/container, aspect-ratio makes it square */
+            width: 40%; /* For 2-button rows, take 40% width */
+            aspect-ratio: 1; /* Make height equal to width */
 
-            border: 4% solid #333; /* Border size relative to button size or container */
+            border: 8px solid #333; /* Fixed border */
             border-radius: 50%; /* Make them round */
             cursor: pointer;
-            transition: background-color 0.1s ease; /* Optional: smooth background change */
-            user-select: none; /* Prevent text selection */
-            box-sizing: border-box; /* Include border in element's total width and height */
+            transition: background-color 0.1s ease;
+            user-select: none;
+            box-sizing: border-box;
+            position: static; /* Ensure it's not absolutely positioned */
+            /* margin handled by gap in row flexbox */
         }
 
-        /* Assign colors and position the 5 colored buttons using percentages */
-        /* Further adjusted positions for more space */
-        #button-red {
-            top: 8%; /* 離頂部容器的 8% */
-            left: 50%;
-            transform: translateX(-50%); /* 水平居中 */
-            background-color: #9f0f17; /* Red */
-        }
-        #button-yellow {
-            top: 22%; /* 離頂部容器的 22% */
-            right: 8%; /* 離右側容器的 8% */
-             background-color: #ccb200; /* Yellow */
-        }
-        #button-pink {
-            bottom: 22%; /* 離底部容器的 22% */
-            right: 8%; /* 離右側容器的 8% */
-             background-color: #ff69b4; /* Pink */
-        }
-        #button-green {
-            bottom: 22%; /* 離底部容器的 22% */
-            left: 8%; /* 離左側容器的 8% */
-            background-color: #00a74a; /* Green */
-        }
-         #button-blue {
-            top: 22%; /* 離頂部容器的 22% */
-            left: 8%; /* 離左側容器的 8% */
-            background-color: #0a4d9d; /* Blue */
-        }
+        /* Specific size for the single button in the first row */
+         .centered-row .game-button {
+             width: 50%; /* Take 50% width in the centered row */
+             /* aspect-ratio: 1; handled by general rule */
+             /* border, border-radius, etc. handled by general rule */
+         }
+
+
+        /* Assign colors */
+        #button-red { background-color: #9f0f17; }
+        #button-yellow { background-color: #ccb200; }
+        #button-pink { background-color: #ff69b4; }
+        #button-green { background-color: #00a74a; }
+        #button-blue { background-color: #0a4d9d; }
 
 
         .game-button:active {
-            filter: brightness(1.3); /* Make it brighter on click */
+            filter: brightness(1.3);
         }
 
         .game-button.lit {
             box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
-            filter: none; /* Ensure no filter */
-            z-index: 1;
+            filter: none;
+            /* z-index is less relevant with flex/grid unless using position:relative */
         }
 
-        #start-button-center {
-            position: absolute;
-            /* Size relative to container - Reduced size */
-            width: 20%; /* 寬度為容器的 20% */
-            height: 20%; /* 高度為容器的 20% */
-
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* 完全居中 */
-            background-color: #881337; /* Dark red start button */
-            color: white;
-            border: 6px solid #333;
-            border-radius: 50%;
-            font-size: 1.5em; /* Use relative unit */
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            transition: background-color 0.2s ease;
-            z-index: 2;
-            text-align: center; /* Center text inside button */
-            padding: 5px; /* Add padding */
-            box-sizing: border-box; /* Include border and padding in size */
+        #start-button-bottom {
+            /* Size and styling */
+             width: 180px; /* Adjust size */
+             height: 60px; /* Adjust size */
+             font-size: 1.5em; /* Adjust size */
+             /* Add other button styles */
+             background-color: #881337;
+             color: white;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+             transition: background-color 0.2s ease;
+             margin-top: 25px; /* Space above start button */
+             text-align: center;
+             flex-shrink: 0;
         }
 
-        #start-button-center:hover {
-             background-color: #a11641;
-        }
-
-         #start-button-center:active {
-             background-color: #6a0e2c;
-        }
+        #start-button-bottom:hover { background-color: #a11641; }
+        #start-button-bottom:active { background-color: #6a0e2c; }
 
 
         #status {
-            margin-top: 20px; /* Adjust margin */
-            font-size: 1.4em; /* Use relative unit */
+            margin-top: 20px;
+            font-size: 1.4em;
             min-height: 1.5em;
             color: #333;
             font-weight: bold;
             text-align: center;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0;
         }
 
         /* Optional: Adjustments for very small screens if needed */
         @media (max-width: 400px) {
-             h1 {
-                 font-size: 1.8em;
-             }
-             #score {
-                 font-size: 1.6em;
-             }
-             #status {
-                 font-size: 1.3em;
-             }
-             /* Further minor adjustments to button positions might be needed if layout breaks */
+             h1 { font-size: 1.8em; }
+             #score { font-size: 1.6em; }
+             #status { font-size: 1.3em; }
+             #start-button-bottom { width: 150px; height: 50px; font-size: 1.2em; }
+             .button-row { gap: 10px; } /* Smaller gap on very small screens */
         }
 
     </style>
@@ -175,14 +158,20 @@
 
     <div id="score">得分：0</div>
 
-    <div id="game-container">
-        <button class="game-button" id="button-red" data-index="0"></button>
-        <button class="game-button" id="button-yellow" data-index="1"></button>
-        <button class="game-button" id="button-pink" data-index="2"></button>
-        <button class="game-button" id="button-green" data-index="3"></button>
-        <button class="game-button" id="button-blue" data-index="4"></button>
+    <div id="game-container-new">
+        <div class="button-row centered-row">
+            <button class="game-button" id="button-red" data-index="0"></button>
+        </div>
+        <div class="button-row">
+            <button class="game-button" id="button-yellow" data-index="1"></button>
+            <button class="game-button" id="button-pink" data-index="2"></button>
+        </div>
+        <div class="button-row">
+            <button class="game-button" id="button-green" data-index="3"></button>
+            <button class="game-button" id="button-blue" data-index="4"></button>
+        </div>
 
-        <button id="start-button-center">START</button>
+        <button id="start-button-bottom">START</button>
     </div>
 
     <div id="status">點擊 START 開始遊戲</div>
@@ -190,7 +179,7 @@
     <script>
         // Get only the colored game buttons
         const gameButtons = document.querySelectorAll('.game-button');
-        const startButton = document.getElementById('start-button-center');
+        const startButton = document.getElementById('start-button-bottom'); // 注意 ID 已改變
         const statusDisplay = document.getElementById('status');
         const scoreDisplay = document.getElementById('score');
 
