@@ -11,6 +11,8 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            height: 100vh; /* Set body height to exactly 100% of viewport height */
+            overflow: hidden; /* Prevent scrolling */
             background-color: #f0f0f0;
             font-family: sans-serif;
             margin: 0;
@@ -24,6 +26,7 @@
             margin-bottom: 15px; /* Adjust margin */
             font-size: 2em; /* Use relative unit for title */
             text-align: center;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         #score {
@@ -31,15 +34,17 @@
             font-size: 1.8em; /* Use relative unit */
             font-weight: bold;
             color: #333;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         #game-container {
             position: relative;
             /* Use viewport units for size, and set max size for large screens */
-            width: 85vw; /* 容器寬度為視口寬度的 85% */
-            height: 85vw; /* 容器高度為視口寬度的 85%，保持正方形 */
-            max-width: 500px; /* 最大寬度不超過 500px */
-            max-height: 500px; /* 最大高度不超過 500px */
+            /* Slightly increased container percentage and max size */
+            width: 90vw; /* 容器寬度為視口寬度的 90% */
+            height: 90vw; /* 容器高度為視口寬度的 90%，保持正方形 */
+            max-width: 550px; /* 最大寬度不超過 550px */
+            max-height: 550px; /* 最大高度不超過 550px */
 
             margin: 0 auto; /* Center the container horizontally */
             background-color: #333;
@@ -50,44 +55,43 @@
 
         .game-button {
             position: absolute;
-            /* Use percentage for size relative to container */
-            width: 35%; /* 按鈕寬度為容器寬度的 35% */
-            height: 35%; /* 按鈕高度為容器高度的 35% */
+            /* Use percentage for size relative to container - Reduced size */
+            width: 30%; /* 按鈕寬度為容器寬度的 30% */
+            height: 30%; /* 按鈕高度為容器高度的 30% */
 
             border: 4% solid #333; /* Border size relative to button size or container */
             border-radius: 50%; /* Make them round */
             cursor: pointer;
-            /* Removed filter transition for potential mobile performance */
             transition: background-color 0.1s ease; /* Optional: smooth background change */
             user-select: none; /* Prevent text selection */
             box-sizing: border-box; /* Include border in element's total width and height */
         }
 
         /* Assign colors and position the 5 colored buttons using percentages */
-        /* Adjusted positions for better spread in percentage layout */
+        /* Further adjusted positions for more space */
         #button-red {
-            top: 5%; /* 離頂部容器的 5% */
+            top: 8%; /* 離頂部容器的 8% */
             left: 50%;
             transform: translateX(-50%); /* 水平居中 */
             background-color: #9f0f17; /* Red */
         }
         #button-yellow {
-            top: 18%; /* 離頂部容器的 18% */
+            top: 22%; /* 離頂部容器的 22% */
             right: 8%; /* 離右側容器的 8% */
              background-color: #ccb200; /* Yellow */
         }
         #button-pink {
-            bottom: 18%; /* 離底部容器的 18% */
+            bottom: 22%; /* 離底部容器的 22% */
             right: 8%; /* 離右側容器的 8% */
              background-color: #ff69b4; /* Pink */
         }
         #button-green {
-            bottom: 18%; /* 離底部容器的 18% */
+            bottom: 22%; /* 離底部容器的 22% */
             left: 8%; /* 離左側容器的 8% */
             background-color: #00a74a; /* Green */
         }
          #button-blue {
-            top: 18%; /* 離頂部容器的 18% */
+            top: 22%; /* 離頂部容器的 22% */
             left: 8%; /* 離左側容器的 8% */
             background-color: #0a4d9d; /* Blue */
         }
@@ -98,7 +102,6 @@
         }
 
         .game-button.lit {
-            /* Simplified glow for better mobile performance */
             box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
             filter: none; /* Ensure no filter */
             z-index: 1;
@@ -106,9 +109,9 @@
 
         #start-button-center {
             position: absolute;
-            /* Size relative to container */
-            width: 25%; /* 寬度為容器的 25% */
-            height: 25%; /* 高度為容器的 25% */
+            /* Size relative to container - Reduced size */
+            width: 20%; /* 寬度為容器的 20% */
+            height: 20%; /* 高度為容器的 20% */
 
             top: 50%;
             left: 50%;
@@ -147,6 +150,7 @@
             color: #333;
             font-weight: bold;
             text-align: center;
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         /* Optional: Adjustments for very small screens if needed */
