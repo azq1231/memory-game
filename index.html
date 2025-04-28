@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simon 序列記憶遊戲 (響應式佈局)</title>
+    <title>Simon 序列記憶遊戲</title>
     <style>
         body {
             display: flex;
@@ -14,7 +14,7 @@
             background-color: #f0f0f0;
             font-family: sans-serif;
             margin: 0;
-            padding: 20px; /* Add some padding in case content touches edges */
+            padding: 10px; /* Add some padding in case content touches edges */
             box-sizing: border-box; /* Include padding in total width/height */
         }
 
@@ -23,6 +23,7 @@
             margin-top: 0; /* Adjust margin */
             margin-bottom: 15px; /* Adjust margin */
             font-size: 2em; /* Use relative unit for title */
+            text-align: center;
         }
 
         #score {
@@ -54,11 +55,12 @@
             height: 35%; /* 按鈕高度為容器高度的 35% */
 
             border: 4% solid #333; /* Border size relative to button size or container */
-            border-radius: 50%;
+            border-radius: 50%; /* Make them round */
             cursor: pointer;
-            transition: filter 0.1s ease;
-            user-select: none;
-            box-sizing: border-box;
+            /* Removed filter transition for potential mobile performance */
+            transition: background-color 0.1s ease; /* Optional: smooth background change */
+            user-select: none; /* Prevent text selection */
+            box-sizing: border-box; /* Include border in element's total width and height */
         }
 
         /* Assign colors and position the 5 colored buttons using percentages */
@@ -92,7 +94,7 @@
 
 
         .game-button:active {
-            filter: brightness(1.3);
+            filter: brightness(1.3); /* Make it brighter on click */
         }
 
         .game-button.lit {
@@ -158,7 +160,7 @@
              #status {
                  font-size: 1.3em;
              }
-             /* Further minor adjustments to button positions might be needed */
+             /* Further minor adjustments to button positions might be needed if layout breaks */
         }
 
     </style>
@@ -262,12 +264,12 @@
 
         // Function to light up a game button and play sound
         async function lightUpButton(index) {
-            playTone(index, 550); // Play tone slightly longer than visual flash (Using adjusted duration from last step)
+            playTone(index, 550); // Play tone slightly longer than visual flash
             const button = gameButtons[index];
             button.classList.add('lit');
-            await sleep(600); // How long the button stays lit (Using adjusted duration from last step)
+            await sleep(600); // How long the button stays lit
             button.classList.remove('lit');
-            await sleep(350); // Delay between button flashes (Using adjusted duration from last step)
+            await sleep(350); // Delay between button flashes
         }
 
         // Show the sequence to the user
@@ -311,13 +313,13 @@
             const clickedButton = event.target;
             const clickedIndex = parseInt(clickedButton.dataset.index);
 
-            playTone(clickedIndex, 200); // Play tone briefly on click feedback
+            playTone(clickedIndex, 150); // 將點擊音效時長縮短到 150 毫秒
 
              // Brief visual feedback on click
             clickedButton.classList.add('lit');
             setTimeout(() => {
                 clickedButton.classList.remove('lit');
-            }, 250); // Shorter flash on user click (Using adjusted duration from last step)
+            }, 150); // 將按鈕點亮時長縮短到 150 毫秒
 
             userSequence.push(clickedIndex);
 
@@ -330,7 +332,7 @@
                     // Round complete!
                     statusDisplay.textContent = '正確！準備下一輪...';
                     disableGameButtons(); // Disable while waiting for next round
-                    setTimeout(nextRound, 1500); // Wait before starting next round
+                    setTimeout(nextRound, 1000); // 將進入下一輪前的等待時間縮短到 1000 毫秒 (1 秒)
                 }
                 // If not complete, wait for the next click
             } else {
