@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon 序列遊戲 (分散按鈕)</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #score {
+            margin-bottom: 15px;
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #game-container {
+            position: relative; /* Allow absolute positioning of children */
+            width: 550px; /* 增加容器寬度 */
+            height: 550px; /* 增加容器高度 */
+            margin: 20px;
+            background-color: #333; /* Dark background for the game unit */
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-button {
+            position: absolute;
+            width: 140px; /* 按鈕尺寸 */
+            height: 140px; /* 按鈕尺寸 */
+            border: 10px solid #333; /* Dark border */
+            border-radius: 50%; /* Make them round */
+            cursor: pointer;
+            transition: filter 0.1s ease; /* Transition for brightness */
+            user-select: none; /* Prevent text selection */
+            box-sizing: border-box; /* Include border in element's total width and height */
+        }
+
+        /* Assign colors and position the 5 colored buttons */
+        /* Adjusted positions to be more spread out */
+        #button-red {
+            top: 40px; /* 離頂部更遠 */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #9f0f17; /* Red */
+        }
+        #button-yellow {
+            top: 130px; /* 離頂部更遠 */
+            right: 60px; /* 離右側更遠 */
+             background-color: #ccb200; /* Yellow */
+        }
+        #button-pink {
+            bottom: 130px; /* 離底部更遠 */
+            right: 60px; /* 離右側更遠 */
+             background-color: #ff69b4; /* Pink */
+        }
+        #button-green {
+            bottom: 130px; /* 離底部更遠 */
+            left: 60px; /* 離左側更遠 */
+            background-color: #00a74a; /* Green */
+        }
+         #button-blue {
+            top: 130px; /* 離頂部更遠 */
+            left: 60px; /* 離左側更遠 */
+            background-color: #0a4d9d; /* Blue */
+        }
+
+
+        .game-button:active {
+            filter: brightness(1.3); /* Make it brighter on click */
+        }
+
+        .game-button.lit {
+            filter: brightness(2.2); /* Make it much brighter when lit by game */
+            box-shadow: 0 0 30px rgba(255, 255, 255, 1); /* Add a stronger glow */
+            z-index: 1; /* Bring lit button to front slightly */
+        }
+
+        #start-button-center {
+            position: absolute;
+            width: 100px; /* Size of the start button */
+            height: 100px; /* Size of the start button */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center it */
+            background-color: #881337; /* Dark red start button */
+            color: white;
+            border: 6px solid #333; /* Dark border */
+            border-radius: 50%; /* Make it round */
+            font-size: 1.4em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            transition: background-color 0.2s ease;
+            z-index: 2; /* Ensure start button is above game buttons */
+        }
+
+        #start-button-center:hover {
+             background-color: #a11641;
+        }
+
+         #start-button-center:active {
+             background-color: #6a0e2c;
+        }
+
+
+        #status {
+            margin-top: 15px;
+            font-size: 1.4em;
+            min-height: 1.5em; /* Reserve space to prevent layout shifts */
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Simon 序列遊戲</h1>
+
+    <div id="score">得分：0</div>
+
+    <div id="game-container">
+        <button class="game-button" id="button-red" data-index="0"></button>
+        <button class="game-button" id="button-yellow" data-index="1"></button>
+        <button class="game-button" id="button-pink" data-index="2"></button>
+        <button class="game-button" id="button-green" data-index="3"></button>
+        <button class="game-button" id="button-blue" data-index="4"></button>
+
+        <button id="start-button-center">START</button>
+    </div>
+
+    <div id="status">點擊 START 開始遊戲</div>
+
+    <script>
+        // Get only the colored game buttons
+        const gameButtons = document.querySelectorAll('.game-button');
+        const startButton = document.getElementById('start-button-center');
+        const statusDisplay = document.getElementById('status');
+        const scoreDisplay = document.getElementById('score');
+
+        let sequence = [];
+        let userSequence = [];
+        let level = 0;
+        let isDuringSequence = false; // Flag to prevent user clicks while sequence is showing
+
+        // --- Audio Setup ---
+        // Create AudioContext - browsers require this to be created/resumed on user interaction
+        let audioContext = null;
+
+        // Frequencies for each button color (adjust as needed)
+        // Index 0: Red, 1: Yellow, 2: Pink, 3: Green, 4: Blue
+        const frequencies = [
+            440.00, // Red (A4)
+            329.63, // Yellow (E4)
+            261.63, // Pink (C4) - Middle C
+            220.00, // Green (A3)
+            164.81  // Blue (E3)
+        ];
+
+        // Function to play a tone
+        function playTone(index, duration = 300) { // duration in ms
+            if (!audioContext || audioContext.state === 'suspended') {
+                 console.warn('AudioContext not active or suspended.');
+                 // Attempt to resume if possible (handled in startGame/first click)
+                 if (audioContext && audioContext.state === 'suspended') {
+                     audioContext.resume().then(() => {
+                         console.log('AudioContext resumed successfully during play attempt.');
+                         // Try playing again after resume (might not work perfectly the first time)
+                         // playTone(index, duration); // Avoid infinite loops if resume fails
+                     }).catch(e => console.error('AudioContext resume failed during play attempt:', e));
+                 }
+                 return;
+            }
+
+            // Prevent playing if index is out of bounds
+            if (index < 0 || index >= frequencies.length) {
+                 console.error('Invalid tone index:', index);
+                 return;
+            }
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            // Set tone properties
+            oscillator.type = 'sine'; // Type of wave: 'sine', 'square', 'triangle', 'sawtooth'
+            oscillator.frequency.setValueAtTime(frequencies[index], audioContext.currentTime);
+
+            // Set volume - start at full volume
+            gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+
+            // Connect oscillator to gain node, and gain node to speakers
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // Start the oscillator immediately
+            oscillator.start();
+
+            // Stop the oscillator and reduce gain after the specified duration
+            const stopTime = audioContext.currentTime + duration / 1000;
+            gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime); // Fade out
+            oscillator.stop(stopTime);
+
+             // Clean up nodes after they stop playing (important for performance)
+             oscillator.onended = () => {
+                 oscillator.disconnect();
+                 gainNode.disconnect();
+             };
+        }
+
+        // Helper function for delay
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Function to light up a game button and play sound
+        async function lightUpButton(index) {
+            playTone(index, 450); // Play tone slightly longer than visual flash
+            const button = gameButtons[index];
+            button.classList.add('lit');
+            await sleep(500); // How long the button stays lit
+            button.classList.remove('lit');
+            await sleep(250); // Delay between button flashes
+        }
+
+        // Show the sequence to the user
+        async function showSequence() {
+            isDuringSequence = true;
+            disableGameButtons(); // Disable clicks during sequence display
+            statusDisplay.textContent = '看我點亮...';
+            // startButton.style.display = 'none'; // Hide start button while sequence is showing (already hidden after start)
+
+            await sleep(1200); // Initial delay before showing sequence
+
+            for (const index of sequence) {
+                await lightUpButton(index);
+            }
+
+            isDuringSequence = false;
+            enableGameButtons(); // Enable clicks after sequence display
+            userSequence = []; // Reset user sequence for the new round
+            statusDisplay.textContent = '你的回合！';
+        }
+
+        // Add a new step to the sequence and start the next round
+        function nextRound() {
+            level++;
+            scoreDisplay.textContent = `得分：${level - 1}`; // Score is level minus 1
+
+            // Add a random button index (0 to 4 for 5 buttons) to the sequence
+            const randomButtonIndex = Math.floor(Math.random() * gameButtons.length);
+            sequence.push(randomButtonIndex);
+
+            showSequence();
+        }
+
+        // Handle user game button clicks
+        function handleGameButtonClick(event) {
+            // Ignore clicks if sequence is showing, game is over, or buttons are disabled
+             if (isDuringSequence || event.target.disabled) {
+                return;
+            }
+
+            const clickedButton = event.target;
+            const clickedIndex = parseInt(clickedButton.dataset.index);
+
+            playTone(clickedIndex, 200); // Play tone briefly on click feedback
+
+             // Brief visual feedback on click
+            clickedButton.classList.add('lit');
+            setTimeout(() => {
+                clickedButton.classList.remove('lit');
+            }, 150); // Shorter flash on user click
+
+            userSequence.push(clickedIndex);
+
+            const currentIndex = userSequence.length - 1;
+
+            // Check if the last clicked button is correct
+            if (userSequence[currentIndex] === sequence[currentIndex]) {
+                // If correct, check if the sequence is complete for this level
+                if (userSequence.length === sequence.length) {
+                    // Round complete!
+                    statusDisplay.textContent = '正確！準備下一輪...';
+                    disableGameButtons(); // Disable while waiting for next round
+                    setTimeout(nextRound, 1500); // Wait before starting next round
+                }
+                // If not complete, wait for the next click
+            } else {
+                // Incorrect! Game Over
+                gameOver();
+            }
+        }
+
+        // Game Over
+        function gameOver() {
+            statusDisplay.textContent = `遊戲結束！你的得分是：${level - 1}`;
+            disableGameButtons(); // Disable game buttons
+            startButton.style.display = 'flex'; // Show start button again
+
+            // Optional: Play a game over sound (e.g., a low frequency tone)
+             // playTone(someErrorIndex or frequency, duration); // Need to add an error frequency or index
+
+            sequence = []; // Reset sequence for next game
+            userSequence = []; // Reset user sequence as well
+            level = 0; // Reset level
+        }
+
+        // Disable the colored game buttons
+        function disableGameButtons() {
+            gameButtons.forEach(button => button.disabled = true);
+        }
+
+        // Enable the colored game buttons
+        function enableGameButtons() {
+             // Only enable if not during sequence display
+             if (!isDuringSequence) {
+                gameButtons.forEach(button => button.disabled = false);
+             }
+        }
+
+        // Start the game
+        function startGame() {
+             // Initialize or resume AudioContext on first user interaction
+             if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('AudioContext created.');
+             } else if (audioContext.state === 'suspended') {
+                 audioContext.resume().then(() => {
+                    console.log('AudioContext resumed successfully');
+                 }).catch(e => console.error('AudioContext resume failed:', e));
+             }
+
+            // Ensure buttons are disabled and start button is hidden before sequence
+             disableGameButtons();
+             startButton.style.display = 'none';
+
+             // Wait a moment for context to resume if needed, then start round
+            setTimeout(() => {
+                 statusDisplay.textContent = '遊戲開始！';
+                 level = 0; // Ensure level is 0 at the very start
+                 sequence = []; // Clear any previous sequence
+                 userSequence = []; // Clear user sequence
+                 nextRound(); // Start the first round
+            }, 200); // Small delay to help with audio context
+        }
+
+        // Add event listeners to the colored game buttons
+        gameButtons.forEach(button => {
+            button.addEventListener('click', handleGameButtonClick);
+            button.disabled = true; // Disable initially
+        });
+
+        // Add event listener to the central start button
+        startButton.addEventListener('click', startGame);
+
+        // Initial state: game buttons are disabled, start button is visible
+        // disableGameButtons(); // Already done in the loop above
+
+    </script>
+</body>
+</html>
