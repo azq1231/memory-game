@@ -9,7 +9,6 @@
             display: flex;
             flex-direction: column; /* 將子元素垂直排列 */
             align-items: center; /* 子元素在主軸（垂直）上居中 */
-            /* justify-content: center; /* 移除或改為 flex-start 以避免內容超出時被切掉 */
             justify-content: flex-start; /* 改為從頂部開始排列 */
             min-height: 100vh; /* 最小高度為視口高度 */
             height: 100vh; /* 將 body 高度固定為視口高度 */
@@ -17,25 +16,25 @@
             background-color: #f0f0f0;
             font-family: sans-serif;
             margin: 0;
-            padding: 5px; /* 減少 body 內邊距 */
+            padding: 3px; /* 進一步減少 body 內邊距 */
             box-sizing: border-box;
         }
 
         h1 {
             color: #333;
-            margin-top: 5px; /* 減少上邊距 */
-            margin-bottom: 5px; /* 減少下邊距 */
-            font-size: 2em;
+            margin-top: 3px; /* 進一步減少上邊距 */
+            margin-bottom: 3px; /* 進一步減少下邊距 */
+            font-size: 1.8em; /* 縮小字體 */
             text-align: center;
-            flex-shrink: 0; /* 不縮小 */
+            flex-shrink: 0;
         }
 
         #score {
-            margin-bottom: 10px; /* 減少下邊距 */
-            font-size: 1.8em;
+            margin-bottom: 5px; /* 進一步減少下邊距 */
+            font-size: 1.6em; /* 縮小字體 */
             font-weight: bold;
             color: #333;
-            flex-shrink: 0; /* 不縮小 */
+            flex-shrink: 0;
         }
 
         #game-container-new {
@@ -49,9 +48,9 @@
             background-color: #333;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            padding: 10px; /* 減少內邊距 */
+            padding: 8px; /* 減少內邊距 */
             box-sizing: border-box;
-            flex-shrink: 0; /* 不縮小 */
+            flex-shrink: 0;
             flex-grow: 1; /* 佔滿 body 中剩餘的垂直空間 */
             justify-content: center; /* 在容器內部將行垂直居中 */
         }
@@ -61,8 +60,8 @@
             justify-content: center;
             align-items: center;
             width: 100%; /* 行佔滿容器寬度 */
-            margin-bottom: 10px; /* 減少行之間的下邊距 */
-             gap: 15px; /* 減少按鈕之間的間距 */
+            margin-bottom: 8px; /* 進一步減少行之間的下邊距 */
+             gap: 12px; /* 進一步減少按鈕之間的間距 */
         }
 
         /* For rows with two buttons, spread them out */
@@ -74,7 +73,8 @@
         .game-button {
             /* Responsive size */
             /* Size relative to the row/container, aspect-ratio makes it square */
-            width: 40%; /* For 2-button rows, take 40% width */
+            /* 進一步縮小按鈕寬度百分比 */
+            width: 35%; /* 針對兩個按鈕的行 (原 38%) */
             aspect-ratio: 1; /* Make height equal to width */
 
             border: 8px solid #333;
@@ -88,7 +88,8 @@
 
         /* Specific size for the single button in the first row */
          .centered-row .game-button {
-             width: 50%; /* Take 50% width in the centered row */
+             /* 進一步縮小單個按鈕的寬度百分比 */
+             width: 40%; /* 針對一個按鈕的行 (原 45%) */
              aspect-ratio: 1;
              margin: 0 auto; /* Center the single button */
          }
@@ -109,28 +110,27 @@
         .game-button.lit {
             box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
             filter: none;
-            /* z-index is less relevant with flex/grid unless using position:relative */
         }
 
         #start-button-bottom {
             /* Size and styling */
              width: 180px;
-             height: 50px; /* 減少高度 */
-             font-size: 1.4em; /* 減少字體大小 */
+             height: 45px;
+             font-size: 1.3em;
              background-color: #881337;
              color: white;
              border: none;
              border-radius: 5px;
              cursor: pointer;
              transition: background-color 0.2s ease;
-             margin-top: 15px; /* 減少上邊距 */
+             margin-top: 10px;
              text-align: center;
              flex-shrink: 0;
         }
 
         #status {
-            margin-top: 15px; /* 減少上邊距 */
-            font-size: 1.3em; /* 減少字體大小 */
+            margin-top: 8px;
+            font-size: 1.2em;
             min-height: 1.5em;
             color: #333;
             font-weight: bold;
@@ -139,22 +139,17 @@
         }
 
         /* Media query for very small screens */
-        @media (max-height: 600px) { /* 當視口高度小於 600px 時 */
-             h1 { font-size: 1.6em; margin-bottom: 5px; }
-             #score { font-size: 1.5em; margin-bottom: 5px; }
-             #status { font-size: 1.2em; margin-top: 10px; }
-             .button-row { margin-bottom: 8px; gap: 10px; }
-             #start-button-bottom { width: 150px; height: 45px; font-size: 1.2em; margin-top: 10px; }
-             /* Game buttons will scale with width, but adjust border if needed */
-             .game-button { border-width: 6px; }
-        }
-         @media (max-width: 400px) { /* 當視口寬度小於 400px 時 */
-            h1 { font-size: 1.8em; }
-            #score { font-size: 1.6em; }
-            #status { font-size: 1.3em; }
-            /* Button/container width already handles this */
+        @media (max-height: 650px) { /* 調整斷點高度 */
+             h1 { font-size: 1.6em; margin-bottom: 3px; }
+             #score { font-size: 1.4em; margin-bottom: 3px; }
+             #status { font-size: 1.1em; margin-top: 8px; }
+             .button-row { margin-bottom: 6px; gap: 8px; }
+             .game-button { border-width: 5px; } /* 縮小邊框 */
+             #start-button-bottom { width: 150px; height: 40px; font-size: 1.1em; margin-top: 8px; }
          }
-
+         @media (max-width: 400px) { /* 當視口寬度小於 400px 時 */
+             /* 可以在這裡進一步為窄螢幕微調水平佈局，如果需要的話 */
+         }
 
     </style>
 </head>
