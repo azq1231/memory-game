@@ -11,23 +11,14 @@
             align-items: center; /* 子元素在主軸（垂直）上居中 */
             justify-content: flex-start; /* 改為從頂部開始排列 */
             min-height: 100vh; /* 最小高度為視口高度 */
-            /* height: 100vh; /* 如果需要強制不滾動，可以加上這個和 overflow: hidden; */
-            /* overflow: hidden; */
+            height: 100vh; /* 將 body 高度固定為視口高度，配合 overflow: hidden; */
+            overflow: hidden; /* 強制隱藏超出內容，禁止滑動 */
             background-color: #f0f0f0;
             font-family: sans-serif;
             margin: 0;
             padding: 10px; /* 添加一些內邊距 */
             box-sizing: border-box;
         }
-
-        /* 移除 h1 的樣式 */
-        /* h1 {
-            color: #333;
-            margin-top: 0;
-            margin-bottom: 5px;
-            font-size: 2em;
-            text-align: center;
-        } */
 
         /* 包含得分和開始按鈕的容器 */
         #score-and-start-row {
@@ -50,6 +41,8 @@
             display: flex;
             flex-direction: column; /* 容器內的行垂直排列 */
             align-items: center;
+            /* 修改垂直空間分佈方式 */
+            justify-content: space-evenly; /* 將多餘的垂直空間均勻分佈在子元素周圍 */
             width: 95vw; /* 寬度為視口寬度 */
             max-width: 550px; /* 最大寬度 */
             /* 移除高度設定，讓其根據內容和 flex-grow 自動調整 */
@@ -57,21 +50,21 @@
             background-color: #333;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            padding: 8px;
+            padding: 5px; /* 稍微減少內部內邊距 */
             box-sizing: border-box;
             flex-shrink: 0;
             flex-grow: 1; /* 佔滿 body 中剩餘的垂直空間 */
-            justify-content: center; /* 在容器內部將行垂直居中 */
+            /* 原來的 justify-content: center; 是這裡的錯誤，已經移除或被上面的覆盖 */
             margin-top: 15px; /* 與上方容器隔開 */
         }
 
         .button-row {
             display: flex;
-            justify-content: center;
+            justify-content: center; /* 或 space-around */
             align-items: center;
             width: 100%; /* 行佔滿容器寬度 */
-            margin-bottom: 8px;
-             gap: 12px;
+            margin-bottom: 5px; /* 稍微減少行之間的下邊距 */
+             gap: 10px; /* 稍微減少按鈕之間的間距 */
         }
 
         /* For rows with two buttons, spread them out */
@@ -111,7 +104,7 @@
             filter: brightness(1.3);
         }
 
-        /* 點亮按鈕的樣式（保持原來的，沒有增強視覺效果） */
+        /* 點亮按鈕的樣式（保持原來的） */
         .game-button.lit {
             filter: brightness(2.2); /* 保持原來的 filter 效果 */
             box-shadow: 0 0 30px rgba(255, 255, 255, 1); /* 保持原來的 box-shadow */
@@ -156,12 +149,14 @@
 
         /* Media Query adjustments */
          @media (max-height: 650px) {
-             /* 移除 h1 相關的 media query */
-             /* h1 { font-size: 1.8em; margin-bottom: 3px; } */
-             #score-and-start-row { margin-top: 15px; margin-bottom: 10px; } /* 調整容器邊距 */
+             #score-and-start-row { margin-top: 15px; margin-bottom: 10px; }
              #score { font-size: 1.4em; }
              #start-button-center { width: 120px; height: 35px; font-size: 1em; }
-             #game-container-new { margin-top: 10px; margin-bottom: 10px; }
+             #game-container-new {
+                 /* justify-content: space-evenly; */ /* 在這裡應用相同的分佈方式 */
+                 padding: 3px; /* 進一步減少內邊距 */
+                 margin-top: 10px; margin-bottom: 10px;
+            }
              #status { font-size: 1.2em; margin-top: 10px; }
              .button-row { margin-bottom: 6px; gap: 8px; }
              .game-button { border-width: 6px; }
@@ -170,6 +165,10 @@
               #score-and-start-row { width: 95%; }
               #score { font-size: 1.4em; }
               #start-button-center { width: 100px; font-size: 1em; }
+              #game-container-new {
+                  /* justify-content: space-evenly; */ /* 在這裡應用相同的分佈方式 */
+                   padding: 3px; /* 進一步減少內邊距 */
+              }
               .button-row { gap: 6px; }
           }
 
@@ -177,6 +176,8 @@
     </style>
 </head>
 <body>
+
+    <h1>Simon 序列記憶遊戲</h1>
 
     <div id="score-and-start-row">
         <div id="score">得分：0</div>
@@ -202,7 +203,7 @@
     <script>
         // Get only the colored game buttons
         const gameButtons = document.querySelectorAll('.game-button');
-        const startButton = document.getElementById('start-button-center'); // 注意 ID 已改變
+        const startButton = document.getElementById('start-button-center');
         const statusDisplay = document.getElementById('status');
         const scoreDisplay = document.getElementById('score');
 
@@ -283,9 +284,9 @@
             playTone(index, 550); // Play tone slightly longer than visual flash
             const button = gameButtons[index];
             button.classList.add('lit');
-            await sleep(600); // How long the button stays lit
+            await sleep(600); // How long the button stays lit (保持原來的延遲)
             button.classList.remove('lit');
-            await sleep(350); // Delay between button flashes
+            await sleep(350); // Delay between button flashes (保持原來的延遲)
         }
 
         // Show the sequence to the user
@@ -295,7 +296,7 @@
             statusDisplay.textContent = '看我點亮...';
             startButton.style.display = 'none'; // Hide start button while sequence is showing
 
-            await sleep(1200); // Initial delay before showing sequence
+            await sleep(1200); // Initial delay before showing sequence (保持原來的延遲)
 
             for (const index of sequence) {
                 await lightUpButton(index);
