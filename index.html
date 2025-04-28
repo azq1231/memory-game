@@ -45,7 +45,6 @@
             justify-content: space-evenly; /* 將多餘的垂直空間均勻分佈在子元素周圍 */
             width: 95vw; /* 寬度為視口寬度 */
             max-width: 550px; /* 最大寬度 */
-            /* 移除高度設定，讓其根據內容和 flex-grow 自動調整 */
             margin: 0 auto;
             background-color: #333;
             border-radius: 15px;
@@ -54,22 +53,23 @@
             box-sizing: border-box;
             flex-shrink: 0;
             flex-grow: 1; /* 佔滿 body 中剩餘的垂直空間 */
-            /* 原來的 justify-content: center; 是這裡的錯誤，已經移除或被上面的覆盖 */
             margin-top: 15px; /* 與上方容器隔開 */
         }
 
         .button-row {
             display: flex;
-            justify-content: center; /* 或 space-around */
+            /* 將 justify-content 改為 center */
+            justify-content: center; /* 使行內的按鈕在行中居中 */
             align-items: center;
             width: 100%; /* 行佔滿容器寬度 */
             margin-bottom: 5px; /* 稍微減少行之間的下邊距 */
-             gap: 10px; /* 稍微減少按鈕之間的間距 */
+            /* 增加 gap 的值，作為按鈕之間的主要間距控制 */
+             gap: 15px; /* 增加按鈕之間的間距 */
         }
 
-        /* For rows with two buttons, spread them out */
+        /* 移除針對非置中行的 justify-content: space-around 規則 */
         .button-row:not(.centered-row) {
-            justify-content: space-around;
+            /* justify-content: space-around; */
         }
 
 
@@ -88,7 +88,7 @@
          .centered-row .game-button {
              width: 40%; /* 針對一個按鈕的行 */
              aspect-ratio: 1;
-             margin: 0 auto;
+             margin: 0 auto; /* 保持 margin auto 以水平居中單個按鈕 */
          }
 
 
@@ -153,12 +153,11 @@
              #score { font-size: 1.4em; }
              #start-button-center { width: 120px; height: 35px; font-size: 1em; }
              #game-container-new {
-                 /* justify-content: space-evenly; */ /* 在這裡應用相同的分佈方式 */
                  padding: 3px; /* 進一步減少內邊距 */
                  margin-top: 10px; margin-bottom: 10px;
             }
              #status { font-size: 1.2em; margin-top: 10px; }
-             .button-row { margin-bottom: 6px; gap: 8px; }
+             .button-row { margin-bottom: 6px; gap: 10px; } /* 縮小行內間距並調整 gap */
              .game-button { border-width: 6px; }
          }
           @media (max-width: 400px) {
@@ -166,17 +165,15 @@
               #score { font-size: 1.4em; }
               #start-button-center { width: 100px; font-size: 1em; }
               #game-container-new {
-                  /* justify-content: space-evenly; */ /* 在這裡應用相同的分佈方式 */
                    padding: 3px; /* 進一步減少內邊距 */
               }
-              .button-row { gap: 6px; }
+              .button-row { gap: 8px; } /* 窄螢幕下進一步縮小行內間距 */
           }
 
 
     </style>
 </head>
 <body>
-
 
     <div id="score-and-start-row">
         <div id="score">得分：0</div>
@@ -283,9 +280,9 @@
             playTone(index, 550); // Play tone slightly longer than visual flash
             const button = gameButtons[index];
             button.classList.add('lit');
-            await sleep(600); // How long the button stays lit (保持原來的延遲)
+            await sleep(600); // How long the button stays lit
             button.classList.remove('lit');
-            await sleep(350); // Delay between button flashes (保持原來的延遲)
+            await sleep(350); // Delay between button flashes
         }
 
         // Show the sequence to the user
@@ -295,7 +292,7 @@
             statusDisplay.textContent = '看我點亮...';
             startButton.style.display = 'none'; // Hide start button while sequence is showing
 
-            await sleep(1200); // Initial delay before showing sequence (保持原來的延遲)
+            await sleep(1200); // Initial delay before showing sequence
 
             for (const index of sequence) {
                 await lightUpButton(index);
