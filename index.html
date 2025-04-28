@@ -11,30 +11,39 @@
             align-items: center; /* 子元素在主軸（垂直）上居中 */
             justify-content: flex-start; /* 改為從頂部開始排列 */
             min-height: 100vh; /* 最小高度為視口高度 */
-            height: 100vh; /* 將 body 高度固定為視口高度 */
-            overflow: hidden; /* 強制隱藏超出內容，禁止滑動 */
+            /* height: 100vh; /* 如果需要強制不滾動，可以加上這個和 overflow: hidden; */
+            /* overflow: hidden; */
             background-color: #f0f0f0;
             font-family: sans-serif;
             margin: 0;
-            padding: 3px; /* 進一步減少 body 內邊距 */
+            padding: 10px; /* 添加一些內邊距 */
             box-sizing: border-box;
         }
 
-        h1 {
+        /* 移除 h1 的樣式 */
+        /* h1 {
             color: #333;
-            margin-top: 3px; /* 進一步減少上邊距 */
-            margin-bottom: 3px; /* 進一步減少下邊距 */
-            font-size: 1.8em; /* 縮小字體 */
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 2em;
             text-align: center;
-            flex-shrink: 0;
+        } */
+
+        /* 包含得分和開始按鈕的容器 */
+        #score-and-start-row {
+            display: flex; /* 使用 Flexbox 使子元素並排 */
+            align-items: center; /* 垂直居中 */
+            justify-content: space-between; /* 得分靠左，開始靠右 */
+            width: 90%; /* 容器寬度 */
+            max-width: 400px; /* 容器最大寬度 */
+            margin: 20px auto 15px auto; /* 增加頂部邊距，水平居中，並添加下方邊距 */
         }
 
         #score {
-            margin-bottom: 5px; /* 進一步減少下邊距 */
-            font-size: 1.6em; /* 縮小字體 */
+            margin: 0; /* 移除垂直邊距 */
+            font-size: 1.6em;
             font-weight: bold;
             color: #333;
-            flex-shrink: 0;
         }
 
         #game-container-new {
@@ -48,11 +57,12 @@
             background-color: #333;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            padding: 8px; /* 減少內邊距 */
+            padding: 8px;
             box-sizing: border-box;
             flex-shrink: 0;
             flex-grow: 1; /* 佔滿 body 中剩餘的垂直空間 */
             justify-content: center; /* 在容器內部將行垂直居中 */
+            margin-top: 15px; /* 與上方容器隔開 */
         }
 
         .button-row {
@@ -60,8 +70,8 @@
             justify-content: center;
             align-items: center;
             width: 100%; /* 行佔滿容器寬度 */
-            margin-bottom: 8px; /* 進一步減少行之間的下邊距 */
-             gap: 12px; /* 進一步減少按鈕之間的間距 */
+            margin-bottom: 8px;
+             gap: 12px;
         }
 
         /* For rows with two buttons, spread them out */
@@ -71,27 +81,21 @@
 
 
         .game-button {
-            /* Responsive size */
-            /* Size relative to the row/container, aspect-ratio makes it square */
-            /* 進一步縮小按鈕寬度百分比 */
-            width: 35%; /* 針對兩個按鈕的行 (原 38%) */
-            aspect-ratio: 1; /* Make height equal to width */
-
-            border: 8px solid #333;
+            width: 35%; /* 針對兩個按鈕的行 */
+            aspect-ratio: 1;
+            border: 8px solid #333; /* 預設邊框顏色是這個深灰色 */
             border-radius: 50%;
             cursor: pointer;
-            transition: background-color 0.1s ease;
+            transition: background-color 0.1s ease; /* 保持原來的過渡 */
             user-select: none;
             box-sizing: border-box;
             position: static;
         }
 
-        /* Specific size for the single button in the first row */
          .centered-row .game-button {
-             /* 進一步縮小單個按鈕的寬度百分比 */
-             width: 40%; /* 針對一個按鈕的行 (原 45%) */
+             width: 40%; /* 針對一個按鈕的行 */
              aspect-ratio: 1;
-             margin: 0 auto; /* Center the single button */
+             margin: 0 auto;
          }
 
 
@@ -107,57 +111,77 @@
             filter: brightness(1.3);
         }
 
+        /* 點亮按鈕的樣式（保持原來的，沒有增強視覺效果） */
         .game-button.lit {
-            box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.8);
-            filter: none;
+            filter: brightness(2.2); /* 保持原來的 filter 效果 */
+            box-shadow: 0 0 30px rgba(255, 255, 255, 1); /* 保持原來的 box-shadow */
+            z-index: 1;
         }
 
-        #start-button-bottom {
-            /* Size and styling */
-             width: 180px;
-             height: 45px;
-             font-size: 1.3em;
+        #start-button-center {
+            /* 尺寸和樣式（在 score-and-start-row 容器內） */
+             width: 150px; /* 調整寬度 */
+             height: 40px; /* 調整高度 */
+             font-size: 1.2em; /* 調整字體大小 */
              background-color: #881337;
              color: white;
              border: none;
              border-radius: 5px;
              cursor: pointer;
              transition: background-color 0.2s ease;
-             margin-top: 10px;
              text-align: center;
-             flex-shrink: 0;
+             display: flex; /* 用於內部文字居中 */
+             align-items: center;
+             justify-content: center;
+             margin: 0; /* 垂直邊距由父容器控制 */
+        }
+
+        #start-button-center:hover {
+             background-color: #a11641;
+        }
+
+         #start-button-center:active {
+             background-color: #6a0e2c;
         }
 
         #status {
-            margin-top: 8px;
-            font-size: 1.2em;
+            margin-top: 15px; /* 與遊戲容器隔開 */
+            margin-bottom: 10px; /* 下邊距 */
+            font-size: 1.4em;
             min-height: 1.5em;
             color: #333;
             font-weight: bold;
             text-align: center;
-            flex-shrink: 0;
         }
 
-        /* Media query for very small screens */
-        @media (max-height: 650px) { /* 調整斷點高度 */
-             h1 { font-size: 1.6em; margin-bottom: 3px; }
-             #score { font-size: 1.4em; margin-bottom: 3px; }
-             #status { font-size: 1.1em; margin-top: 8px; }
+        /* Media Query adjustments */
+         @media (max-height: 650px) {
+             /* 移除 h1 相關的 media query */
+             /* h1 { font-size: 1.8em; margin-bottom: 3px; } */
+             #score-and-start-row { margin-top: 15px; margin-bottom: 10px; } /* 調整容器邊距 */
+             #score { font-size: 1.4em; }
+             #start-button-center { width: 120px; height: 35px; font-size: 1em; }
+             #game-container-new { margin-top: 10px; margin-bottom: 10px; }
+             #status { font-size: 1.2em; margin-top: 10px; }
              .button-row { margin-bottom: 6px; gap: 8px; }
-             .game-button { border-width: 5px; } /* 縮小邊框 */
-             #start-button-bottom { width: 150px; height: 40px; font-size: 1.1em; margin-top: 8px; }
+             .game-button { border-width: 6px; }
          }
-         @media (max-width: 400px) { /* 當視口寬度小於 400px 時 */
-             /* 可以在這裡進一步為窄螢幕微調水平佈局，如果需要的話 */
-         }
+          @media (max-width: 400px) {
+              #score-and-start-row { width: 95%; }
+              #score { font-size: 1.4em; }
+              #start-button-center { width: 100px; font-size: 1em; }
+              .button-row { gap: 6px; }
+          }
+
 
     </style>
 </head>
 <body>
 
-    <h1>Simon 序列遊戲</h1>
-
-    <div id="score">得分：0</div>
+    <div id="score-and-start-row">
+        <div id="score">得分：0</div>
+        <button id="start-button-center">START</button>
+    </div>
 
     <div id="game-container-new">
         <div class="button-row centered-row">
@@ -172,15 +196,13 @@
             <button class="game-button" id="button-blue" data-index="4"></button>
         </div>
 
-        <button id="start-button-bottom">START</button>
-    </div>
+    </div> <div id="status">點擊 START 開始遊戲</div>
 
-    <div id="status">點擊 START 開始遊戲</div>
 
     <script>
         // Get only the colored game buttons
         const gameButtons = document.querySelectorAll('.game-button');
-        const startButton = document.getElementById('start-button-bottom'); // 注意 ID 已改變
+        const startButton = document.getElementById('start-button-center'); // 注意 ID 已改變
         const statusDisplay = document.getElementById('status');
         const scoreDisplay = document.getElementById('score');
 
@@ -271,7 +293,7 @@
             isDuringSequence = true;
             disableGameButtons(); // Disable clicks during sequence display
             statusDisplay.textContent = '看我點亮...';
-            // startButton.style.display = 'none'; // Hide start button while sequence is showing (already hidden after start)
+            startButton.style.display = 'none'; // Hide start button while sequence is showing
 
             await sleep(1200); // Initial delay before showing sequence
 
@@ -376,16 +398,17 @@
 
             // Ensure buttons are disabled and start button is hidden before sequence
              disableGameButtons();
-             startButton.style.display = 'none';
+             startButton.style.display = 'none'; // 隱藏開始按鈕
 
              // Wait a moment for context to resume if needed, then start round
             setTimeout(() => {
                  statusDisplay.textContent = '遊戲開始！';
                  level = 0; // Ensure level is 0 at the very start
+                 scoreDisplay.textContent = `得分：${level}`; // 重設得分顯示為 0
                  sequence = []; // Clear any previous sequence
                  userSequence = []; // Clear user sequence
                  nextRound(); // Start the first round
-            }, 200); // Small delay to help with audio context
+            }, 200); // 小延遲
         }
 
         // Add event listeners to the colored game buttons
@@ -398,7 +421,9 @@
         startButton.addEventListener('click', startGame);
 
         // Initial state: game buttons are disabled, start button is visible
-        // disableGameButtons(); // Already done in the loop above
+         disableGameButtons(); // 確保遊戲按鈕初始是禁用的
+         startButton.style.display = 'flex'; // 確保開始按鈕初始是顯示的
+
 
     </script>
 </body>
