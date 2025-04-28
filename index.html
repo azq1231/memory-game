@@ -49,18 +49,20 @@
             display: flex;
             flex-direction: column; /* 容器內的行垂直排列 */
             align-items: center;
-            /* 修改垂直空間分佈方式為 space-between */
+            /* 修改垂直空間分佈方式為 space-between 
             justify-content: space-between; /* 將空間僅分佈在子元素之間 */
+        	justify-content: flex-start; /* ✅改這裡，不用 space-between */
+
             width: 95vw; /* 寬度為視口寬度 */
             max-width: 550px; /* 最大寬度 */
             margin: 0 auto;
             background-color: #333;
             border-radius: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            padding: 3px; /* 進一步減少內部內邊距 */
+            padding: 8px; /* 進一步減少內部內邊距 */
             box-sizing: border-box;
             flex-shrink: 0;
-            flex-grow: 1; /* 佔滿 body 中剩餘的垂直空間 */
+            flex-grow: 0; /* 佔滿 body 中剩餘的垂直空間 */
             margin-top: 15px; /* 與上方容器隔開 */
         }
 
@@ -69,8 +71,10 @@
             justify-content: center; /* 保持行內的水平居中 */
             align-items: center;
             width: 100%; /* 行佔滿容器寬度 */
-            margin-bottom: 3px; /* 進一步減少行之間的下邊距 */
-             gap: 15px; /* 保持按鈕之間的水平間距 */
+            margin-bottom: 8px; /* 進一步減少行之間的下邊距 */
+             gap: 20px; /* 保持按鈕之間的水平間距 */
+		    flex-shrink: 0; /* ✅防止行自己縮 */
+             
         }
 
         /* 移除針對非置中行的 justify-content: space-around 規則 */
