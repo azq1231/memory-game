@@ -72,6 +72,10 @@
         .button-row:not(.centered-row) {
             /* justify-content: space-around; */
         }
+		.button-row.two-buttons {
+   			 justify-content: space-between; /* 讓按鈕左右貼邊 */
+  			 padding: 0 10px; /* 可選，加點內邊距不要太貼邊 */
+		}
 
 
         .game-button {
@@ -173,6 +177,17 @@
               .button-row { gap: 8px; } /* 窄螢幕下進一步縮小行內間距 */
           }
 
+@media (max-width: 600px) {
+    .button-row.two-buttons {
+        padding: 0 8px; /* 手機小一點 */
+    }
+}
+
+@media (min-width: 601px) {
+    .button-row.two-buttons {
+        padding: 0 20px; /* 平板或桌機多一點 */
+    }
+}
 
     </style>
 </head>
@@ -187,7 +202,7 @@
         <div class="button-row centered-row">
             <button class="game-button" id="button-red" data-index="0"></button>
         </div>
-        <div class="button-row">
+        <div class="button-row two-buttons">
             <button class="game-button" id="button-yellow" data-index="1"></button>
             <button class="game-button" id="button-pink" data-index="2"></button>
         </div>
