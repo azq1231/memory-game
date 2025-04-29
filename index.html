@@ -152,6 +152,8 @@
             color: #333;
             font-weight: bold;
             text-align: center;
+                position: relative; /* 加上這行，讓 z-index 有效 */
+    z-index: 2; /* 確保它在 #speed-controls 之上 */
         }
 
         /* Media Query adjustments */
@@ -189,14 +191,67 @@
     }
 }
 
-    </style>
+    /* Speed 控制區塊 */
+
+	#speed-controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f8f8f8; /* 淺底色，跟頁面分開 */
+        padding: 10px 0;
+        text-align: center;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2); /* 頂部陰影 */
+        z-index: 1;
+	}
+	
+	.speed-toggle {
+		display: inline-flex;
+		border: 2px solid #4CAF50;
+		border-radius: 30px;
+		overflow: hidden;
+		background-color: white;
+	}
+
+	.speed-button {
+    	background-color:white; 
+   	 	border: none;
+    	color: #4CAF50;		/* 綠色 */
+    	padding: 12px 24px;
+    	font-size: 1.2em; /* 改成跟其他按鈕比較接近 */
+        cursor: pointer;
+        flex: 1;
+        transition: background-color 0.3s, transform 0.2s;
+	}
+
+	.speed-button.active {
+		background-color: #4CAF50;
+		color: white;
+	}
+
+	.speed-button:hover {
+		background-color: #d4edda;
+	}
+
+/* 手機版自動變大 */
+@media (max-width: 600px) {
+    .speed-button {
+        padding: 16px 28px;
+        font-size: 1.3em;
+    }
+}
+</style>
+
 </head>
 <body>
 
     <div id="score-and-start-row">
         <div id="score">得分：0</div>
+        
         <button id="start-button-center">START</button>
     </div>
+
+
 
     <div id="game-container-new">
         <div class="button-row centered-row">
@@ -212,6 +267,34 @@
         </div>
 
     </div> <div id="status">點擊 START 開始遊戲</div>
+
+<div id="speed-controls">
+    <div class="speed-toggle">
+        <button class="speed-button active" id="slow-btn">慢速</button>
+        <button class="speed-button" id="fast-btn">快速</button>
+    </div>
+</div>
+
+	<script>
+	const slowBtn = document.getElementById('slow-btn');
+	const fastBtn = document.getElementById('fast-btn');
+
+	slowBtn.addEventListener('click', () => {
+		slowBtn.classList.add('active');
+		fastBtn.classList.remove('active');
+		// 這裡可以加上切換到慢速邏輯
+		    speedMultiplier = 1.0; // 慢速
+
+	});
+
+	fastBtn.addEventListener('click', () => {
+		fastBtn.classList.add('active');
+		slowBtn.classList.remove('active');
+		// 這裡可以加上切換到快速邏輯
+		    speedMultiplier = 0.4; // 快速（可以依需要調整倍率）
+
+	});
+	</script>
 
 
     <script>
@@ -295,12 +378,12 @@
 
         // Function to light up a game button and play sound
         async function lightUpButton(index) {
-            playTone(index, 550); // Play tone slightly longer than visual flash
+            playTone(index, 550* speedMultiplier); // Play tone slightly longer than visual flash
             const button = gameButtons[index];
             button.classList.add('lit');
-            await sleep(600); // How long the button stays lit
+            await sleep(600* speedMultiplier); // How long the button stays lit
             button.classList.remove('lit');
-            await sleep(350); // Delay between button flashes
+            await sleep(350* speedMultiplier); // Delay between button flashes
         }
 
         // Show the sequence to the user
@@ -310,7 +393,7 @@
             statusDisplay.textContent = '看我點亮...';
             startButton.style.display = 'none'; // Hide start button while sequence is showing
 
-            await sleep(1200); // Initial delay before showing sequence
+            await sleep(1200* speedMultiplier); // Initial delay before showing sequence
 
             for (const index of sequence) {
                 await lightUpButton(index);
@@ -438,6 +521,18 @@
         // Initial state: game buttons are disabled, start button is visible
          disableGameButtons(); // 確保遊戲按鈕初始是禁用的
          startButton.style.display = 'flex'; // 確保開始按鈕初始是顯示的
+         
+         let speedMultiplier = 1; // 預設是普通速度
+
+
+// 彈跳動畫 (按下時有點回彈感)
+function animateButton(button) {
+    button.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+        button.style.transform = 'scale(1)';
+    }, 150);
+}
+
 
 
     </script>
